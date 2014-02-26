@@ -1,0 +1,584 @@
+# Sample Python/Pygame Programs
+# Simpson College Computer Science
+# http://programarcadegames.com/
+# http://simpson.edu/computer-science/
+ 
+import pygame
+from pygame.locals import *
+import random
+import math
+ 
+# Define some colors
+black    = (   0,   0,   0)
+white    = ( 255, 255, 255)
+red      = ( 255,   0,   0)
+green    = (   0, 255,   0)
+blue    = (   0, 0,   255)
+RIGHT    = 1
+STOP     = 0
+LEFT     = -1
+UP       = 1
+DOWN     = -1
+
+PI = math.pi
+LEFTDOWN = False
+RIGHTDOWN = False
+CLOCKWISEDOWN = False
+COUNTERCLOCKWISEDOWN = False
+UPDOWN = False
+DOWNDOWN = False
+
+gravity = .2
+
+
+############################
+#Classes
+############################
+
+class Floor(pygame.sprite.Sprite):
+
+    def __init__(self,color,width,height):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([width, height])
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+        
+class Point():
+    def __init__(self,_x,_y):
+        self.x = _x
+        self.y = _y
+    def display(self):
+        pygame.draw.circle(screen,black,(self.x,self.y),4)
+    def display3D(self):
+        pygame.draw.circle(fp.image,black,(self.x,self.y),4)
+    def update(self,_x,_y):
+        self.x = _x
+        self.y = _y
+
+class Segment():
+    def __init__(self,_x1,_y1,_x2,_y2):
+        self.x1 = _x1
+        self.y1 = _y1
+        self.x2 = _x2
+        self.y2 = _y2
+    def display(self):
+        pygame.draw.line(screen,green,(self.x1,self.y1),(self.x2,self.y2))
+
+class Lens():
+    def __init__(self,_alphaX = 0, _thetaX = 0, _betaX = 0):
+        self.alphaX = _alphaX
+        self.thetaX = _thetaX
+        self.betaX = _betaX
+        
+    def update(self):
+        self.calcPointPlaceX(zelf,eyes)
+
+    def calcPointPlaceX(self,point,look):
+        self.pointVisible(point,look)
+        self.pointVisible(point,look)
+        distanceX = self.calcDistX(point,look)
+        lambdaX = self.calcLambdaX(look)
+        fX = self.calcFX(distanceX,self.betaX,look,lambdaX)
+        gX = self.calcGX(distanceX,self.betaX,lambdaX)
+        displayDistX = self.calcDisplayDistX(fX,gX)
+        return displayDistX
+    def pointVisible(self,point,look):
+        visible = False
+        self.thetaX = self.calcThetaX(point,look)
+        self.alphaX = self.calcAlphaX(look)
+        self.betaX = self.calcBetaX(look)
+        if (self.betaX > 0 and self.betaX < look.fovX):
+            visible = True
+        return visible
+    def calcThetaX(self,point,look):
+        thetaX = PI - math.atan2(look.y-point.y,look.x-point.x)
+        return thetaX 
+    def calcBetaX(self,look):
+        betaX = self.alphaX +(look.fovX)/2 - self.thetaX
+        return betaX
+    def calcAlphaX(self,look):
+        return look.angle 
+    def calcDistX(self,point,look):
+        distanceX = math.sqrt((look.x - point.x)*(look.x - point.x) + (look.y - point.y)*(look.y - point.y))
+        return distanceX
+    def calcLambdaX(self,look):
+        lambdaX = (180 - look.fovX)/2
+        return lambdaX
+    def calcFX(self, distanceX, betaX,look,lambdaX):
+        fX = distanceX*math.sin(look.fovX - betaX)/math.sin(lambdaX)
+        return fX
+    def calcGX(self, distanceX, betaX,lambdaX):
+        gX = distanceX*math.sin(betaX)/math.sin(lambdaX)
+        return gX
+    def calcDisplayDistX(self, fX, gX):
+        displayDistX = screen_width*(gX/(fX + gX))
+        return displayDistX
+        
+class Looker():
+    def __init__(self,_x = 300,_y = 300,_a = PI/2,_fov = PI/2):
+        self.x = _x
+        self.y = _y
+        self.fovX = _fov
+        self.angle = _a + self.fovX/2
+        
+
+        self.acceleration = .8
+
+        self.terminalV = -10
+        
+        self.max_x_speed = 7
+        self.x_speed = 0
+        
+        self.max_y_speed = 7
+        self.y_speed = 0
+        
+        self.x_direction = STOP
+        self.y_direction = STOP
+
+    def update(self):
+        
+        self.move_x()
+        self.move_y()
+
+        self.x += self.x_speed
+        self.y += self.y_speed
+
+        if CLOCKWISEDOWN == True:
+            self.rotate(-PI/32)
+        elif COUNTERCLOCKWISEDOWN == True:
+            self.rotate(PI/32)
+        self.angle = self.angle%(2*PI)
+        self.drawViews()
+
+    def drawViews(self):
+        pygame.draw.line(screen,red,(self.x,self.y),(self.x + 200*math.cos(self.angle),self.y - 200*math.sin(self.angle)))
+        pygame.draw.line(screen,blue,(self.x,self.y),(self.x + 100*math.cos(self.angle + self.fovX/2),self.y - 100*math.sin(self.angle + self.fovX/2)))
+        pygame.draw.line(screen,blue,(self.x,self.y),(self.x + 100*math.cos(self.angle - self.fovX/2),self.y - 100*math.sin(self.angle - self.fovX/2)))
+
+    def move_x(self):
+        if self.x_direction == STOP:
+            if(self.x_speed > 1):
+                self.x_speed -= self.acceleration
+            elif(self.x_speed < -1):
+                self.x_speed += self.acceleration
+            else:
+                self.x_speed = 0
+        else:
+            if self.x_direction == RIGHT:
+                if(self.x_speed < self.max_x_speed): 
+                    self.x_speed += self.acceleration
+            elif self.x_direction == LEFT:
+                if(-self.x_speed < self.max_x_speed): 
+                    self.x_speed -= self.acceleration
+
+
+    def move_y(self):
+        if self.y_direction == STOP:
+            if(self.y_speed > 1):
+                self.y_speed -= self.acceleration
+            elif(self.y_speed < -1):
+                self.y_speed += self.acceleration
+            else:
+                self.y_speed = 0
+        else:
+            if self.y_direction == DOWN:
+                if(self.y_speed < self.max_y_speed): 
+                    self.y_speed += self.acceleration
+            elif self.y_direction == UP:
+                if(-self.y_speed < self.max_y_speed): 
+                    self.y_speed -= self.acceleration
+
+    def respawn(self):
+        self.rect.y = 0
+        self.rect.x = 50
+
+        self.max_x_speed = 7
+        self.x_speed = 0
+        
+        self.max_y_speed = 7
+        self.y_speed = 0
+
+    def setAngle(self,_angle):
+        self.angle = _angle
+    def rotate(self,_change):
+        self.angle += _change
+    def set_max_x_speed(self,_max_x_speed):
+        self.max_x_speed = _max_x_speed
+        
+    def set_x_direction(self,_x_direction):
+        self.x_direction = _x_direction
+
+    def set_max_y_speed(self,_max_y_speed):
+        self.max_y_speed = _max_y_speed
+        
+    def set_y_direction(self,_y_direction):
+        self.y_direction = _y_direction
+
+
+class FPView(pygame.sprite.Sprite):
+    def __init__(self,color,width,height):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([width, height])
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+
+###############
+        #JUMPER
+###############
+class Jumper(pygame.sprite.Sprite):
+    
+    def __init__(self,color,width,height):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([width, height])
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+
+        self.grounded = False
+        self.anyGround = False
+
+        self.walledRight = False
+        self.walledLeft = False
+        self.walledTop = False
+        self.walledBottom = False
+
+        self.acceleration = .8
+
+        self.terminalV = -10
+        
+        self.max_x_speed = 7
+        self.x_speed = 0
+        
+        self.max_y_speed = 7
+        self.y_speed = 0
+        
+        self.x_direction = STOP
+        self.y_direction = STOP
+        
+        
+    def update(self):
+        for walls in floor_list:
+            self.wallCollide(walls)
+##            self.groundCheck(walls)
+##            if (self.grounded or self.anyGround):
+##                self.anyGround = True
+            if spriteCollideR(jumper,floor2):
+                self.image.fill(blue)
+            else:
+                self.image.fill(green)
+        self.move_x()
+        #self.fall()
+        self.move_y()
+        for walls in floor_list:
+            self.wallStop(walls)
+        
+        self.rect.x += self.x_speed
+        self.rect.y += self.y_speed
+        self.drawViews()
+
+    def drawViews(self):
+        pygame.draw.line(screen,blue,(0,0),(0,400),1)
+
+    def move_x(self):
+        if self.x_direction == STOP:
+            if(self.x_speed > 1):
+                self.x_speed -= self.acceleration
+            elif(self.x_speed < -1):
+                self.x_speed += self.acceleration
+            else:
+                self.x_speed = 0
+        else:
+            if self.x_direction == RIGHT:
+                if(self.x_speed < self.max_x_speed): 
+                    self.x_speed += self.acceleration
+            elif self.x_direction == LEFT:
+                if(-self.x_speed < self.max_x_speed): 
+                    self.x_speed -= self.acceleration
+
+
+    def move_y(self):
+        if self.y_direction == STOP:
+            if(self.y_speed > 1):
+                self.y_speed -= self.acceleration
+            elif(self.y_speed < -1):
+                self.y_speed += self.acceleration
+            else:
+                self.y_speed = 0
+        else:
+            if self.y_direction == DOWN:
+                if(self.y_speed < self.max_y_speed): 
+                    self.y_speed += self.acceleration
+            elif self.y_direction == UP:
+                if(-self.y_speed < self.max_y_speed): 
+                    self.y_speed -= self.acceleration
+                    
+    def wallCollide(self,_wall):
+        if collideXR(self, _wall) and collideBottomER(self,_wall) :
+            self.walledBottom = True
+        else:
+            if self.walledBottom:
+                self.walledBottom = False
+        if self.walledBottom:
+            self.y_speed = 0
+
+        if collideXR(self, _wall) and collideTopER(self,_wall) :
+            self.walledTop = True
+        else:
+            if self.walledTop:
+                self.walledTop = False
+        if self.walledTop:
+            self.y_speed = 0
+
+        if collideYR(self, _wall) and collideRightER(self,_wall) :
+            self.walledRight = True
+        else:
+            if self.walledRight:
+                self.walledRight = False
+        if self.walledRight:
+            self.x_speed = 0
+            
+        if collideYR(self, _wall) and collideLeftER(self,_wall) :
+            self.walledLeft = True
+        else:
+            if self.walledLeft:
+                self.walledLeft = False
+        if self.walledLeft:
+            self.x_speed = 0
+        
+    def wallStop(self,_wall):
+        if self.walledBottom:
+            self.rect.y = _wall.rect.y - self.rect.height
+            if self.y_speed > 0:
+                self.y_speed = 0
+        if self.walledTop:
+            self.rect.y = _wall.rect.y + _wall.rect.height
+            if self.y_speed < 0:
+                self.y_speed = 0
+        if self.walledRight:
+            self.rect.x = _wall.rect.x - self.rect.width
+            if self.x_speed > 0:
+                self.x_speed = 0
+        if self.walledLeft:
+            self.rect.x = _wall.rect.x + _wall.rect.width
+            if self.x_speed < 0:
+                self.x_speed = 0
+                
+    def groundCheck(self,_wall) :
+        if collideBottomER(self,_wall):
+            self.grounded = True
+        else:
+            if self.grounded:
+                self.grounded = False
+    def fall(self):        
+        if self.y_speed < self.max_y_speed:
+                self.y_speed += gravity
+        self.rect.y += self.y_speed 
+        
+    def respawn(self):
+        self.rect.y = 0
+        self.rect.x = 50
+
+        self.max_x_speed = 7
+        self.x_speed = 0
+        
+        self.max_y_speed = 7
+        self.y_speed = 0
+        
+        #self.x_direction = STOP
+        
+    def jump(self):
+        if self.anyGround:
+            self.y_speed = -5
+        #self.grounded = False
+        
+    def set_max_x_speed(self,_max_x_speed):
+        self.max_x_speed = _max_x_speed
+        
+    def set_x_direction(self,_x_direction):
+        self.x_direction = _x_direction
+
+    def set_max_y_speed(self,_max_y_speed):
+        self.max_y_speed = _max_y_speed
+        
+    def set_y_direction(self,_y_direction):
+        self.y_direction = _y_direction
+
+def displayInfo():
+    coord = font.render("(x,y): " + str(int(eyes.x)) + ", " + str(int(eyes.y)), True, black)
+    ang = font.render("angle: " + str(eyes.angle), True, black)
+    angDeg = font.render("deg: " + str(eyes.angle*180/PI), True, black)
+    thetaXD = font.render("thetaX: " + str(cameraLens.thetaX*180/PI), True, black)
+    betaXD = font.render("betaX: " + str(cameraLens.betaX*180/PI), True, black)
+
+    screen.blit(coord, [0, 250])
+    screen.blit(ang, [0, 270])
+    screen.blit(angDeg, [0, 290])
+    screen.blit(thetaXD, [0, 310])
+    screen.blit(betaXD, [0, 330])
+    
+# Initialize Pygame
+pygame.init()
+ 
+# Set the height and width of the screen
+screen_width=700
+screen_height=800
+screen=pygame.display.set_mode([screen_width,screen_height])
+
+font = pygame.font.Font(None, 25)
+
+# This is a list of 'sprites.' Each block in the program is
+# added to this list. The list is managed by a class called 'Group.'
+block_list = pygame.sprite.Group()
+floor_list = pygame.sprite.Group()
+ 
+# This is a list of every sprite. All blocks and the player block as well.
+all_sprites_list = pygame.sprite.Group()
+
+pointList = []
+pointDispList = []
+
+#Create jumper
+#jumper = Jumper(red, 50, 50)
+#all_sprites_list.add(jumper)
+for i in range(3):
+    y = 201 + 100*i
+    if (i%3 != 0):
+    	for j in range(3):
+        	x = 201 + 100*j
+		if (j%3 != 0):
+        		zelf =  Point(x,y)
+        		pointList.append(zelf)
+        
+        		jinx = Point(300,50)
+        		pointDispList.append(jinx)
+    
+
+
+
+#eyes = Looker(300,300,PI/2,PI/4)
+eyes = Looker()
+cameraLens = Lens()
+
+
+fp = FPView((200,200,200),screen_width,100)
+all_sprites_list.add(fp)
+
+#Test spritecollide
+
+#Loop until the user clicks the close button.
+done = False
+ 
+# Used to manage how fast the screen updates
+clock = pygame.time.Clock()
+
+ 
+score = 0
+ 
+# -------- Main Program Loop -----------
+while not done:
+    for event in pygame.event.get(): # User did something
+        if event.type == pygame.QUIT: # If user clicked close
+            done = True # Flag that we are done so we exit this loop
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                eyes.respawn()
+            #if event.key == pygame.K_SPACE:
+                #eyes.jump()
+            if event.key == pygame.K_RIGHT:
+                CLOCKWISEDOWN = True
+                COUNTERCLOCKWISEDOWN = False
+            if event.key == pygame.K_LEFT:
+                COUNTERCLOCKWISEDOWN = True
+                CLOCKWISEDOWN = False
+            if event.key == pygame.K_d:
+                RIGHTDOWN = True
+                if LEFTDOWN:
+                    eyes.set_x_direction(STOP)
+                else:
+                    eyes.set_x_direction(RIGHT)
+            elif event.key == pygame.K_a:
+                LEFTDOWN = True
+                if RIGHTDOWN:
+                    eyes.set_x_direction(STOP)
+                else:
+                    eyes.set_x_direction(LEFT)
+            if event.key == pygame.K_w:
+                UPDOWN = True
+                if DOWNDOWN:
+                    eyes.set_y_direction(STOP)
+                else:
+                    eyes.set_y_direction(UP)
+            elif event.key == pygame.K_s:
+                DOWNDOWN = True
+                if UPDOWN:
+                    eyes.set_y_direction(STOP)
+                else:
+                    eyes.set_y_direction(DOWN)
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_RIGHT:
+                CLOCKWISEDOWN = False
+            if event.key == pygame.K_LEFT:
+                COUNTERCLOCKWISEDOWN = False
+            if event.key == pygame.K_d:
+                RIGHTDOWN = False
+                if LEFTDOWN:
+                    eyes.set_x_direction(LEFT)
+                else:
+                    eyes.set_x_direction(STOP)
+            elif event.key == pygame.K_a:
+                LEFTDOWN = False
+                if RIGHTDOWN:
+                    eyes.set_x_direction(RIGHT)
+                else:
+                    eyes.set_x_direction(STOP)
+            if event.key == pygame.K_w:
+                UPDOWN = False
+                if DOWNDOWN:
+                    eyes.set_y_direction(DOWN)
+                else:
+                    eyes.set_y_direction(STOP)
+            elif event.key == pygame.K_s:
+                DOWNDOWN = False
+                if UPDOWN:
+                    eyes.set_y_direction(UP)
+                else:
+                    eyes.set_y_direction(STOP)
+
+
+    all_sprites_list.update()
+            
+    # Clear the screen
+    screen.fill(white)
+    #fp.image.fill((200,200,200))
+
+    # Draw all the spites
+    all_sprites_list.draw(screen)
+
+    for i in range(len(pointList)):
+        pointList[i].display()
+        #connection = Segment(pointList[i].x,pointList[i].y,eyes.x,eyes.y)
+        #connection.display()
+
+    eyes.update()
+    cameraLens.update()
+
+    for i in range(len(pointDispList)):
+        pointDispList[i].update(int(cameraLens.calcPointPlaceX(pointList[i],eyes)),50)
+
+    fp.image.fill((200,200,200))
+
+    for i in range(len(pointDispList)):
+        if (cameraLens.pointVisible(pointList[i],eyes)):
+        	pointDispList[i].display3D()
+
+
+    displayInfo()
+    
+    # Limit to 60 frames per second
+    clock.tick(60)
+ 
+    # Go ahead and update the screen with what we've drawn.
+    pygame.display.flip()
+    
+    
+ 
+pygame.quit()
