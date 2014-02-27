@@ -75,7 +75,8 @@ public class GameDisplay extends JPanel implements KeyListener {
 		
 		//addSquare3D(100,400,0);
 		//addBuilding(400, 100, 0, 5);
-		addRandomBox(0, 0, 0, 10,50);
+		//addRandomBox(0, 0, 0, 10,50);
+		addRandomBox(0, 0, 0, 5,10);
 		//addRandomBox(-700, 0, 0, 10,50);
 		//addBox(-700, 0, 0, 10,50);
 	}

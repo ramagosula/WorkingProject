@@ -17,13 +17,43 @@ public class Camera {
 	}
 	public void update(Point point){
 		alphaX = look.getAngleX();
-		thetaX = Math.PI - Math.atan2(look.getY()-point.getY(),look.getX()-point.getX());
+		thetaX = Math.PI - Math.atan2(look.getY() -point.getY(),look.getX()-point.getX());
+		//thetaX = calcThetaX(point);
 		betaX = alphaX +(look.getFovX())/2 - thetaX;
 		if (betaX < 0)
 			betaX = betaX%(2*Math.PI) + (2*Math.PI) ;
 		betaX = betaX%(2*Math.PI);
 		//System.out.printf("\nAlphaX: %f\nthetaX: %f\nbetaX: %f",alphaX,thetaX,betaX);
 	}
+	//Doesn't seem to work
+//	private double calcThetaX(Point point){
+//		double theta = 0;
+//		if(point.getX() - look.getX() > 0){
+//			if(point.getY() - look.getY() > 0){
+//				theta = Math.atan2(point.getY()-look.getY(),point.getX()- look.getX());
+//			}else if(point.getY() - look.getY() < 0){
+//				theta = Math.PI - Math.atan2(point.getY()-look.getY(),look.getX()-point.getX());
+//			}else{
+//				theta = 0;
+//			}
+//		}else if(point.getX() - look.getX() < 0){
+//			if(point.getY() - look.getY() > 0){
+//				theta = Math.PI + Math.atan2(look.getY() - point.getY(),look.getX()-point.getX());
+//			}else if(point.getY() - look.getY() < 0){
+//				theta = Math.PI*2 - Math.atan2(look.getY() - point.getY(),point.getX()-look.getX());
+//			}else{
+//				theta = Math.PI;
+//			}
+//		}else{
+//			if(point.getY() - look.getY() > 0){
+//				theta = Math.PI/2;
+//			}else{
+//				theta = Math.PI*3/2;
+//			}
+//		}
+//		return theta;
+//		
+//	}
 	public boolean pointVisibleX(Point point){
 		update(point);
 		boolean pointVisible = false;
