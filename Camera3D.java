@@ -17,7 +17,17 @@ public class Camera3D extends Camera {
 	public void update(Point3D point){
 		super.update(point);
 		alphaY = super.getLook().getAngleY();
-		thetaY = Math.PI - Math.atan2(super.getLook().getZ()-point.getZ(),super.getLook().getY()-point.getY());
+		
+		//VERSION 1: This version is consistent, but only if seen straight on
+//		thetaY = Math.PI - Math.atan2(super.getLook().getZ()-point.getZ(),super.getLook().getY()-point.getY());
+		
+		//VERSION 2: This version is warped-looking, but works from all angles
+		double dist = Math.sqrt((super.getLook().getY() - point.getY())*(super.getLook().getY() - point.getY()) + (super.getLook().getX() - point.getX())*(super.getLook().getX() - point.getX()));
+		double yPrime = dist*Math.tan(Math.PI/4 + super.getLook().getAngleX());
+//		double zPrime = dist*Math.tan(Math.PI/4 + super.getLook().getAngleY());
+//		thetaY = Math.PI - Math.atan2(super.getLook().getZ()-point.getZ(),yPrime);
+		thetaY = Math.PI - Math.atan2(super.getLook().getZ()-point.getZ(),yPrime);
+		
 		betaY = alphaY +(super.getLook().getFovY())/2 - thetaY;
 		if (betaY < 0)
 			betaY = betaY%(2*Math.PI) + (2*Math.PI) ;
@@ -41,11 +51,21 @@ public class Camera3D extends Camera {
         return pointVisible;
 	}
 	public int calcScreenY(Point3D point){
+		update(point);		
+		double distanceY = Math.sqrt((super.getLook().getY() - point.getY())*(super.getLook().getY() - point.getY()) + (super.getLook().getZ() - point.getZ())*(super.getLook().getZ() - point.getZ()));
+		double fY = distanceY*Math.sin(super.getLook().getFovY() - betaY);
+		double gY = distanceY*Math.sin(betaY);
+		int displayDistY = (int) (GameRunner.WIDTH*2*(gY/(3*(fY + gY))));
+		return displayDistY;
+	}
+	public int calcScreenYDebug(Point3D point){
 		update(point);
 		double distanceY = Math.sqrt((super.getLook().getY() - point.getY())*(super.getLook().getY() - point.getY()) + (super.getLook().getZ() - point.getZ())*(super.getLook().getZ() - point.getZ()));
 		double fY = distanceY*Math.sin(super.getLook().getFovY() - betaY);
 		double gY = distanceY*Math.sin(betaY);
 		int displayDistY = (int) (GameRunner.WIDTH*2*(gY/(3*(fY + gY))));
+		System.out.printf("DistanceY:%2f\nfY:%2f\ngY:%2f\nDisplayDistY:%2d\n",distanceY,fY,gY,displayDistY);
+
 		return displayDistY;
 	}
 	public double calcDistance(Point3D point){

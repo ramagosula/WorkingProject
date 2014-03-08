@@ -45,6 +45,8 @@ public class GameDisplay extends JPanel implements KeyListener {
 	private static boolean COUNTERCLOCKWISEDOWNY;
 	private static Looker look = new Looker(300, 600, 0);
 	private static Looker look2 = new Looker(270, 600, 0);
+	private static Camera3D camera = new Camera3D(look);
+	private static Camera3D camera2 = new Camera3D(look2);
 
 	private Random rand = new Random();
 	private ArrayList<Point> pointList = new ArrayList<Point>();
@@ -76,24 +78,25 @@ public class GameDisplay extends JPanel implements KeyListener {
 		//addSquare3D(100,400,0);
 		//addBuilding(400, 100, 0, 5);
 		//addRandomBox(0, 0, 0, 10,50);
-		addRandomBox(0, 0, 0, 5,10);
-		//addRandomBox(-700, 0, 0, 10,50);
-		//addBox(-700, 0, 0, 10,50);
+		//addRandomBox(0, 0, 0, 5,10);
+//		addRandomBox(-700, 0, 0, 10,50);
+//		addBox(-700, 0, 0, 15,50);
+
+//		addBox(-700, 0, 0, 10,50);
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		//Camera camera = new Camera(look);
-		Camera3D camera = new Camera3D(look);
-		Camera3D camera2 = new Camera3D(look2);
 		look.update();
 		look2.setxDirection(look.getxDirection());
 		look2.setyDirection(look.getyDirection());
 		look2.setzDirection(look.getzDirection());
 		look2.setxRotDirection(look.getxRotDirection());
 		look2.setyRotDirection(look.getyRotDirection());
+		look2.setCameraLocked(look.isCameraLocked());
 		look2.update();
-		look.paintArrow(g);
+		//look.paintArrow(g);
 		
 		pointDispList.clear();
 		
@@ -137,8 +140,14 @@ public class GameDisplay extends JPanel implements KeyListener {
 		
 		for (int i = 0; i < pointList3D.size(); i++) {
 			//pointList3D.get(i).display(g);
-			if (camera2.pointVisibleX(pointList3D.get(i)) && camera2.pointVisibleY(pointList3D.get(i))){
-				pointDispList.add(new Point(camera2.calcScreenX(pointList3D.get(i))+ GameRunner.WIDTH,camera2.calcScreenY(pointList3D.get(i))));
+			if(i != 0){
+				if (camera2.pointVisibleX(pointList3D.get(i)) && camera2.pointVisibleY(pointList3D.get(i))){
+					pointDispList.add(new Point(camera2.calcScreenX(pointList3D.get(i))+ GameRunner.WIDTH,camera2.calcScreenY(pointList3D.get(i))));
+				}
+			}else{
+				if (camera2.pointVisibleX(pointList3D.get(i)) && camera2.pointVisibleY(pointList3D.get(i))){
+					pointDispList.add(new Point(camera2.calcScreenX(pointList3D.get(i))+ GameRunner.WIDTH,camera2.calcScreenY(pointList3D.get(i))));
+				}
 			}
 		}	
 		for (int i = 0; i < pointDispList.size(); i++){
@@ -197,15 +206,15 @@ public class GameDisplay extends JPanel implements KeyListener {
 
 	public void drawAxes(int x, int y, int z, Camera3D camera, Graphics g){
 		Point3D center = new Point3D(x, y, z);
-		Point3D lineZ = new Point3D(x, y, z + 50);
-		Point3D lineX = new Point3D(x+50, y, z);
-		Point3D lineY = new Point3D(x, y+50, z);
+		Point3D line2 = new Point3D(x,y,z+50);
 		g.setColor(Color.BLUE);
-		g.drawLine(camera.calcScreenX(center),camera.calcScreenY(center),camera.calcScreenX(lineZ),camera.calcScreenY(lineZ));
+		g.drawLine(camera.calcScreenX(center),camera.calcScreenY(center),camera.calcScreenX(line2),camera.calcScreenY(line2));
 		g.setColor(Color.RED);
-		g.drawLine(camera.calcScreenX(center),camera.calcScreenY(center),camera.calcScreenX(lineX),camera.calcScreenY(lineX));
+		line2.setPosition(x+50, y, z);
+		g.drawLine(camera.calcScreenX(center),camera.calcScreenY(center),camera.calcScreenX(line2),camera.calcScreenY(line2));
 		g.setColor(Color.GREEN);
-		g.drawLine(camera.calcScreenX(center),camera.calcScreenY(center),camera.calcScreenX(lineY),camera.calcScreenY(lineY));
+		line2.setPosition(x, y+50, z);
+		g.drawLine(camera.calcScreenX(center),camera.calcScreenY(center),camera.calcScreenX(line2),camera.calcScreenY(line2));
 
 	}
 	public void drawLines(Graphics g){
@@ -287,6 +296,9 @@ public class GameDisplay extends JPanel implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
+		case KeyEvent.VK_SPACE:
+			look.setCameraLocked(!look.isCameraLocked());
+			break;
 		case KeyEvent.VK_W:
 			//forward
 			FORWARDDOWN = true;
