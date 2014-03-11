@@ -23,7 +23,8 @@ public class Camera3D extends Camera {
 		
 		//VERSION 2: This version is warped-looking, but works from all angles
 		double dist = Math.sqrt((super.getLook().getY() - point.getY())*(super.getLook().getY() - point.getY()) + (super.getLook().getX() - point.getX())*(super.getLook().getX() - point.getX()));
-		double yPrime = dist*Math.tan(Math.PI/4 + super.getLook().getAngleX());
+		double yPrime = dist*Math.tan(Math.PI/4 + super.getLook().getFovX());
+//		double yPrime = dist*Math.tan(super.getLook().getAngleX()-super.getLook().getAngleX());
 //		double zPrime = dist*Math.tan(Math.PI/4 + super.getLook().getAngleY());
 //		thetaY = Math.PI - Math.atan2(super.getLook().getZ()-point.getZ(),yPrime);
 		thetaY = Math.PI - Math.atan2(super.getLook().getZ()-point.getZ(),yPrime);

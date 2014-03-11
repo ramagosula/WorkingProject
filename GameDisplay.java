@@ -82,7 +82,7 @@ public class GameDisplay extends JPanel implements KeyListener {
 //		addRandomBox(-700, 0, 0, 10,50);
 //		addBox(-700, 0, 0, 15,50);
 
-//		addBox(-700, 0, 0, 10,50);
+		addBox(-700, 0, 0, 10,50);
 	}
 
 	public void paintComponent(Graphics g) {
