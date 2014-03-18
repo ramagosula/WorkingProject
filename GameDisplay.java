@@ -82,14 +82,15 @@ public class GameDisplay extends JPanel implements KeyListener {
 		//addBuilding(400, 100, 0, 5);
 		//addRandomBox(0, 0, 0, 10,50);
 		//addRandomBox(0, 0, 0, 5,10);
-		addRandomBox(-1000, 0, 0, 10,50);
+//		addRandomBox(-1000, 0, 0, 10,50);
 //		addBox(-700, 0, 0, 15,50);
 
 		//addBox(-700, 0, 0, 10,50);
-		addSphere(500, 0, 0, 50, 500);
-		addSpiral(-500,0,0);
-		addCone(0, 0, 0);
-		//lineList.add(new Line3D(new Point3D(0,0,0), new Point3D(50,50,50), camera));
+		//addSphere(500, 0, 0, 50, 100);
+		//addSpiral(-500,0,0);
+//		addCone(0, 0, 0);
+		addLineCone(0, 0, 0);
+		addLineSpiral(-500, 0, 0);
 	}
 
 	public void paintComponent(Graphics g) {
@@ -123,6 +124,7 @@ public class GameDisplay extends JPanel implements KeyListener {
 				pointDispList.add(new Point(camera.calcScreenX(pointList3D.get(i)),camera.calcScreenY(pointList3D.get(i))));
 			}
 		}	
+
 		
 		//int moveLeft = -1300;
 
@@ -138,11 +140,16 @@ public class GameDisplay extends JPanel implements KeyListener {
 		for (int i = 0; i < pointDispList.size(); i++){
 			pointDispList.get(i).display(g);
 		}
-		drawAxes(300, 300, 20, camera, g);//This draws the coordinate axes
+		
+		Line3D.setCamera(camera);
 		
 		for (int i = 0; i < lineList.size(); i++){
 			lineList.get(i).display(g,Color.magenta);
 		}
+		
+		drawAxes(300, 300, 20, camera, g);//This draws the coordinate axes
+		
+
 		
 		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(GameRunner.WIDTH, 0, GameRunner.WIDTH, GameRunner.HEIGHT);
@@ -164,6 +171,12 @@ public class GameDisplay extends JPanel implements KeyListener {
 		}	
 		for (int i = 0; i < pointDispList.size(); i++){
 			pointDispList.get(i).display(g);
+		}
+		
+		Line3D.setCamera(camera2);
+		
+		for (int i = 0; i < lineList.size(); i++){
+			lineList.get(i).display(g,Color.magenta,GameRunner.WIDTH);
 		}
 		
 //		drawLines(g);
@@ -242,6 +255,41 @@ public class GameDisplay extends JPanel implements KeyListener {
 			pointList3D.add(new Point3D(xNew,yNew,zNew));
 		}
 	}
+	public void addLineCone(int x, int y, int z){
+		double increment = .2;
+		for(double t = -100; t < 100 - increment; t += increment){
+			int xNew = (int) (x + t*Math.cos(t));
+			int yNew = (int) (y + t*Math.sin(t));
+			int zNew = (int) (z + t);
+			
+			Point3D startPoint = new Point3D(xNew,yNew,zNew);
+			double t2 = t + increment;
+			xNew = (int) (x + (t2)*Math.cos(t2));
+			yNew = (int) (y + (t2)*Math.sin(t2));
+			zNew = (int) (z + t2);
+			
+			Point3D endPoint = new Point3D(xNew,yNew,zNew);
+			
+			lineList.add(new Line3D(startPoint, endPoint));
+		}
+	}
+	public void addLineSpiral(int x, int y, int z){
+		double increment = .2;
+		for(double t = 0; t < 100 - increment; t += increment){
+			int xNew = (int) (x + 100*Math.cos(t));
+			int yNew = (int) (y + 100*Math.sin(t));
+			int zNew = (int) (z + 10*t);
+			
+			Point3D startPoint = new Point3D(xNew,yNew,zNew);
+			
+			double t2 = t + increment;
+			xNew = (int) (x + 100*Math.cos(t2));
+			yNew = (int) (y + 100*Math.sin(t2));
+			zNew = (int) (z + 10*t2);
+			Point3D endPoint = new Point3D(xNew,yNew,zNew);
+			lineList.add(new Line3D(startPoint, endPoint));
+		}
+	}
 	public void drawAxes(int x, int y, int z, Camera3D camera, Graphics g){
 		Point3D center = new Point3D(x, y, z);
 		Point3D line2 = new Point3D(x,y,z+50);
@@ -254,36 +302,6 @@ public class GameDisplay extends JPanel implements KeyListener {
 		line2.setPosition(x, y+50, z);
 		g.drawLine(camera.calcScreenX(center),camera.calcScreenY(center),camera.calcScreenX(line2),camera.calcScreenY(line2));
 
-	}
-	public void drawLines(Graphics g){
-		g.setColor(Color.WHITE);
-		g.drawLine(10, 10, 20, 10);
-		g.drawLine(10, 10, 10, 20);
-		g.drawLine(GameRunner.WIDTH - 10, 10, GameRunner.WIDTH - 10,20);
-		g.drawLine(GameRunner.WIDTH - 10, 10, GameRunner.WIDTH - 20,10);
-		g.drawLine(10, 300, 20, 300);
-		g.drawLine(10, 300, 10, 290);
-		g.drawLine(GameRunner.WIDTH - 10, 300, GameRunner.WIDTH - 20, 300);
-		g.drawLine(GameRunner.WIDTH - 10, 300, GameRunner.WIDTH - 10, 290);
-		
-		g.drawLine(GameRunner.WIDTH/2-10, GameRunner.HEIGHT/2 - 10, GameRunner.WIDTH/2+10, GameRunner.HEIGHT/2 - 10);
-		g.drawLine(GameRunner.WIDTH/2-10, GameRunner.HEIGHT/2 - 10, GameRunner.WIDTH/2-10, GameRunner.HEIGHT/2 + 10);
-		g.drawLine(GameRunner.WIDTH/2+10, GameRunner.HEIGHT/2 + 10, GameRunner.WIDTH/2+10, GameRunner.HEIGHT/2 - 10);
-		g.drawLine(GameRunner.WIDTH/2+10, GameRunner.HEIGHT/2 + 10, GameRunner.WIDTH/2-10, GameRunner.HEIGHT/2 + 10);
-		
-		g.drawLine(GameRunner.WIDTH*3/2-10, GameRunner.HEIGHT/2 - 10, GameRunner.WIDTH*3/2+10, GameRunner.HEIGHT/2 - 10);
-		g.drawLine(GameRunner.WIDTH*3/2-10, GameRunner.HEIGHT/2 - 10, GameRunner.WIDTH*3/2-10, GameRunner.HEIGHT/2 + 10);
-		g.drawLine(GameRunner.WIDTH*3/2+10, GameRunner.HEIGHT/2 + 10, GameRunner.WIDTH*3/2+10, GameRunner.HEIGHT/2 - 10);
-		g.drawLine(GameRunner.WIDTH*3/2+10, GameRunner.HEIGHT/2 + 10, GameRunner.WIDTH*3/2-10, GameRunner.HEIGHT/2 + 10);
-		
-		g.drawLine(GameRunner.WIDTH+ 10, 10, GameRunner.WIDTH +20, 10);
-		g.drawLine(GameRunner.WIDTH +10, 10, GameRunner.WIDTH+ 10, 20);
-		g.drawLine(GameRunner.WIDTH*2 - 10, 10, GameRunner.WIDTH*2 - 10,20);
-		g.drawLine(GameRunner.WIDTH*2 - 10, 10, GameRunner.WIDTH*2 - 20,10);
-		g.drawLine(GameRunner.WIDTH+ 10, 300,GameRunner.WIDTH+ 20, 300);
-		g.drawLine(GameRunner.WIDTH+10, 300,GameRunner.WIDTH+ 10, 290);
-		g.drawLine(GameRunner.WIDTH*2 - 10, 300, GameRunner.WIDTH*2 - 20, 300);
-		g.drawLine(GameRunner.WIDTH*2 - 10, 300, GameRunner.WIDTH*2 - 10, 290);
 	}
 	
 	public void drawPlane(int x, int y, int z,int size, Camera3D camera, Graphics g, Color c){
