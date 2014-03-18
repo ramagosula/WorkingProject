@@ -2,19 +2,7 @@ package miniGame;
 import java.awt.Color;
 import java.awt.Graphics;
 public class Point {
-/*
- * class Point():
-    def __init__(self,_x,_y):
-        self.x = _x
-        self.y = _y
-    def display(self):
-        pygame.draw.circle(screen,black,(self.x,self.y),4)
-    def display3D(self):
-        pygame.draw.circle(fp.image,black,(self.x,self.y),4)
-    def update(self,_x,_y):
-        self.x = _x
-        self.y = _y
- */
+
 	private int x;
 	private int y;
 	

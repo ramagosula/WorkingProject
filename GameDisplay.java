@@ -29,6 +29,8 @@ import java.util.Random;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import javax.sound.sampled.Line;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -52,7 +54,8 @@ public class GameDisplay extends JPanel implements KeyListener {
 	private ArrayList<Point> pointList = new ArrayList<Point>();
 	private ArrayList<Point3D> pointList3D = new ArrayList<Point3D>();
 	private ArrayList<Point> pointDispList = new ArrayList<Point>();
-
+	private ArrayList<Line3D> lineList = new ArrayList<Line3D>();
+	
 	public GameDisplay() {// Initialization of panel
 		super();
 		LEFTDOWN = false;
@@ -82,7 +85,10 @@ public class GameDisplay extends JPanel implements KeyListener {
 //		addRandomBox(-700, 0, 0, 10,50);
 //		addBox(-700, 0, 0, 15,50);
 
-		addBox(-700, 0, 0, 10,50);
+		//addBox(-700, 0, 0, 10,50);
+		//addSphere(0, 0, 0, 50, 500);
+		addSpiral(0,0,0);
+		//lineList.add(new Line3D(new Point3D(0,0,0), new Point3D(50,50,50), camera));
 	}
 
 	public void paintComponent(Graphics g) {
@@ -132,6 +138,11 @@ public class GameDisplay extends JPanel implements KeyListener {
 			pointDispList.get(i).display(g);
 		}
 		drawAxes(300, 300, 20, camera, g);//This draws the coordinate axes
+		
+		for (int i = 0; i < lineList.size(); i++){
+			lineList.get(i).display(g,Color.magenta);
+		}
+		
 		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(GameRunner.WIDTH, 0, GameRunner.WIDTH, GameRunner.HEIGHT);
 		g.fillRect(GameRunner.WIDTH, 0, GameRunner.WIDTH, 100);
@@ -203,7 +214,25 @@ public class GameDisplay extends JPanel implements KeyListener {
 			}
 		}
 	}
-
+	public void addSphere(int x, int y, int z, int radius, int approximation){
+		for (double i = 0; i < Math.PI; i += approximation*.001 ){
+			for (double j = 0; j < 2*Math.PI; j += approximation*.001){
+				System.out.println("Help");
+				int xNew = (int) (radius*Math.sin(i)*Math.sin(j));
+				int yNew = (int) (radius*Math.sin(i)*Math.cos(j));
+				int zNew = (int) (radius*Math.cos(i));
+				pointList3D.add(new Point3D(xNew,yNew,zNew));
+			}
+		}
+	}
+	public void addSpiral(int x, int y, int z){
+		for(double t = 0; t < 100; t += .1){
+			int xNew = (int) (x + 100*Math.cos(t));
+			int yNew = (int) (y + 100*Math.sin(t));
+			int zNew = (int) (z + 10*t);
+			pointList3D.add(new Point3D(xNew,yNew,zNew));
+		}
+	}
 	public void drawAxes(int x, int y, int z, Camera3D camera, Graphics g){
 		Point3D center = new Point3D(x, y, z);
 		Point3D line2 = new Point3D(x,y,z+50);
