@@ -91,6 +91,7 @@ public class GameDisplay extends JPanel implements KeyListener {
 //		addCone(0, 0, 0);
 		addLineCone(0, 0, 0);
 		addLineSpiral(-500, 0, 0);
+		addLineSphere(500,0,0,50,100);
 	}
 
 	public void paintComponent(Graphics g) {
@@ -231,7 +232,6 @@ public class GameDisplay extends JPanel implements KeyListener {
 	public void addSphere(int x, int y, int z, int radius, int approximation){
 		for (double i = 0; i < Math.PI; i += approximation*.001 ){
 			for (double j = 0; j < 2*Math.PI; j += approximation*.001){
-				System.out.println("Help");
 				int xNew = (int) (x + radius*Math.sin(i)*Math.sin(j));
 				int yNew = (int) (y + radius*Math.sin(i)*Math.cos(j));
 				int zNew = (int) (z + radius*Math.cos(i));
@@ -288,6 +288,26 @@ public class GameDisplay extends JPanel implements KeyListener {
 			zNew = (int) (z + 10*t2);
 			Point3D endPoint = new Point3D(xNew,yNew,zNew);
 			lineList.add(new Line3D(startPoint, endPoint));
+		}
+	}
+	public void addLineSphere(int x, int y, int z, int radius, int approximation){
+		double increment = approximation*.001;
+		for (double i = 0; i < Math.PI; i += approximation*.001 ){
+			for (double j = 0; j < 2*Math.PI ; j += increment){
+				int xNew = (int) (x + radius*Math.sin(i)*Math.sin(j));
+				int yNew = (int) (y + radius*Math.sin(i)*Math.cos(j));
+				int zNew = (int) (z + radius*Math.cos(i));
+				
+				Point3D startPoint = new Point3D(xNew,yNew,zNew);
+				double t = j + increment;
+				
+				xNew = (int) (x + radius*Math.sin(i)*Math.sin(t));
+				yNew = (int) (y + radius*Math.sin(i)*Math.cos(t));
+				zNew = (int) (z + radius*Math.cos(i));
+				Point3D endPoint = new Point3D(xNew,yNew,zNew);
+
+				lineList.add(new Line3D(startPoint, endPoint));
+			}
 		}
 	}
 	public void drawAxes(int x, int y, int z, Camera3D camera, Graphics g){
