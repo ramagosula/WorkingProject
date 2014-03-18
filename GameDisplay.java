@@ -86,8 +86,8 @@ public class GameDisplay extends JPanel implements KeyListener {
 //		addBox(-700, 0, 0, 15,50);
 
 		//addBox(-700, 0, 0, 10,50);
-		//addSphere(500, 0, 0, 50, 100);
-		//addSpiral(-500,0,0);
+//		addSphere(500, 0, 0, 50, 100);
+//		addSpiral(-500,0,0);
 //		addCone(0, 0, 0);
 		addLineCone(0, 0, 0);
 		addLineSpiral(-500, 0, 0);
