@@ -54,6 +54,7 @@ public class Camera3D extends Camera {
 		double fY = distanceY*Math.sin(super.getLook().getFovY() - betaY);
 		double gY = distanceY*Math.sin(betaY);
 		int displayDistY = (int) (GameRunner.WIDTH*2*(gY/(3*(fY + gY))));
+				
 		return displayDistY;
 	}
 	public int calcScreenYDebug(Point3D point){

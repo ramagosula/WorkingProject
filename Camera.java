@@ -19,7 +19,6 @@ public class Camera {
 		alphaX = look.getAngleX();
 		//VERSION 1: This version is consistent, but only if seen straight on
 		thetaX = Math.PI - Math.atan2(look.getY() -point.getY(),look.getX()-point.getX());
- 
 		//VERSION 2: This version is warped-looking, but works from all angles
 //		double r = Math.sqrt((look.getY() - point.getY())*(look.getY() - point.getY()) + (look.getZ() - ((Point3D)(point)).getZ())*(look.getZ() - ((Point3D)(point)).getZ()));
 //		thetaX = Math.PI - Math.atan2(r,look.getX() - point.getX());

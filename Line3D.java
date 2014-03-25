@@ -26,7 +26,7 @@ public class Line3D {
 	public void display(Graphics g){
 		if(isVisible())
 			g.drawLine(camera.calcScreenX(startPoint),camera.calcScreenY(startPoint),camera.calcScreenX(endPoint),camera.calcScreenY(endPoint));
-		
+			
 	}
 	public void display(Graphics g, Color c){
 		display(g,c,0);
