@@ -90,11 +90,11 @@ public class GameDisplay extends JPanel implements KeyListener {
 //		addSphere(500, 0, 0, 50, 100);
 //		addSpiral(-500,0,0);
 //		addCone(0, 0, 0);
-//		addLineCone(0, 0, 0);
-//		addLineSpiral(-500, 0, 0);
-//		addLineSphere(500,0,0,50,100);
+		addLineCone(0, 0, 0);
+		addLineSpiral(-500, 0, 0);
+		addLineSphere(500,0,0,50,100);
 //		addLineGrid(0, 0, 0, 50, 50, 10);
-		addGrid(0, 0, 0, 50, 50, 10);
+//		addGrid(0, 0, 0, 50, 50, 10);
 		addAxes(0, 0, 0) ;
 //		pointList3D.add(new Point3D());
 
