@@ -79,21 +79,22 @@ public class GameDisplay extends JPanel implements KeyListener {
 //		addSquare(300, 200);
 //		addSquare(400, 100);
 		
-		//addSquare3D(100,400,0);
-		//addBuilding(400, 100, 0, 5);
+//		addSquare3D(100,400,0);
+//		addBuilding(400, 100, 0, 5);
 //		addRandomBox(0, 0, 0, 10,50);
 //		addRandomBox(0, 0, 0, 5,10);
 //		addRandomBox(-1000, 0, 0, 10,50);
-//		addBox(-700, 0, 0, 15,50);
+
 
 		//addBox(-700, 0, 0, 10,50);
 //		addSphere(500, 0, 0, 50, 100);
 //		addSpiral(-500,0,0);
 //		addCone(0, 0, 0);
-		addLineCone(0, 0, 0);
-		addLineSpiral(-500, 0, 0);
-		addLineSphere(500,0,0,50,100);
-//		addLineGrid(0, 0, 0, 50, 50, 10);
+//		addLineCone(0, 0, 0);
+//		addLineSpiral(-500, 0, 0);
+//		addLineSphere(500,0,0,50,100);
+//		addGrid(0, 0, 0, 50, 50, 10);
+		
 //		addGrid(0, 0, 0, 50, 50, 10);
 		addAxes(0, 0, 0) ;
 //		pointList3D.add(new Point3D());
@@ -133,8 +134,8 @@ public class GameDisplay extends JPanel implements KeyListener {
 		}	
 
 		
-		//int moveLeft = -1300;
-
+//		int moveLeft = -500;
+//
 //		drawPlane(moveLeft, 0, 0, 100, camera, g,new Color(255,255,255));
 //		drawPlane(moveLeft, 0, 100, 100, camera, g,new Color(255,255,255));
 //		drawVPlane(moveLeft, 0, 0, 100, camera, g,new Color(240,240,255));
@@ -237,6 +238,17 @@ public class GameDisplay extends JPanel implements KeyListener {
 			}
 		}
 	}
+	public void addLineBox(int x, int y, int z, int size, int spacing){
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				for (int k = 0; k < size; k++){
+					Point3D point = new Point3D(x + i*spacing , y + j*spacing,z + k*spacing);
+					lineList.add(new Line3D(point,point));
+
+				}
+			}
+		}
+	}
 	public void addRandomBox(int x, int y, int z, int size, int spacing){
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
@@ -256,13 +268,16 @@ public class GameDisplay extends JPanel implements KeyListener {
 			}
 		}
 	}
-	public void addSpiral(int x, int y, int z){
-		for(double t = 0; t < 100; t += .2){
+	public void addSpiral(int x, int y, int z, double density){
+		for(double t = 0; t < 100; t += density){
 			int xNew = (int) (x + 100*Math.cos(t));
 			int yNew = (int) (y + 100*Math.sin(t));
 			int zNew = (int) (z + 10*t);
 			pointList3D.add(new Point3D(xNew,yNew,zNew));
 		}
+	}
+	public void addSpiral(int x, int y, int z){
+		addSpiral(x, y, z, .2);
 	}
 	public void addCone(int x, int y, int z){
 		for(double t = -100; t < 100; t += .2){
@@ -278,6 +293,14 @@ public class GameDisplay extends JPanel implements KeyListener {
 				Point3D startPoint = new Point3D(x + i * (GameRunner.WIDTH / spacing), y + j* (GameRunner.HEIGHT / spacing),z);
 				Point3D endPoint = new Point3D(x + i * (GameRunner.WIDTH / spacing), y + j* (GameRunner.HEIGHT / spacing),z + 0);
 				lineList.add(new Line3D(startPoint,endPoint));
+			}
+		}
+	}
+	public void addLineGridVertical1(int x, int y, int z, int length, int width, int spacing){
+		for (int i = 0; i < length; i++) {
+			for (int j = 0; j < width; j++) {
+				Point3D startPoint = new Point3D(x, y + j* (GameRunner.HEIGHT / spacing),z + i*(GameRunner.WIDTH / spacing));
+				lineList.add(new Line3D(startPoint,startPoint));
 			}
 		}
 	}

@@ -19,12 +19,12 @@ public class Camera3D extends Camera {
 		alphaY = super.getLook().getAngleY();
 		
 		//VERSION 1: This version is consistent, but only if seen straight on
-//		thetaY = Math.PI - Math.atan2(super.getLook().getZ()-point.getZ(),super.getLook().getY()-point.getY());
+		thetaY = Math.PI - Math.atan2(super.getLook().getZ()-point.getZ(),super.getLook().getY()-point.getY());
 		
 		//VERSION 2: This version is warped-looking, but works from all angles
-		double dist = Math.sqrt((super.getLook().getY() - point.getY())*(super.getLook().getY() - point.getY()) + (super.getLook().getX() - point.getX())*(super.getLook().getX() - point.getX()));
-		double yPrime = Math.PI - dist*Math.tan(Math.PI/4 + super.getLook().getFovX());
-		thetaY = Math.PI - Math.atan2(super.getLook().getZ()-point.getZ(),yPrime);
+//		double dist = Math.sqrt((super.getLook().getY() - point.getY())*(super.getLook().getY() - point.getY()) + (super.getLook().getX() - point.getX())*(super.getLook().getX() - point.getX()));
+//		double yPrime = Math.PI - dist*Math.tan(Math.PI/4 + super.getLook().getFovX());
+//		thetaY = Math.PI - Math.atan2(super.getLook().getZ()-point.getZ(),yPrime);
 		
 		betaY = alphaY +(super.getLook().getFovY())/2 - thetaY;
 		if (betaY < 0)
