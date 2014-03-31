@@ -76,9 +76,7 @@ public class GameDisplay extends JPanel implements KeyListener {
 		 * Here is where you insert the shapes#
 		 */
 		
-//		addSquare(300, 200);
-//		addSquare(400, 100);
-		
+
 //		addSquare3D(100,400,0);
 //		addBuilding(400, 100, 0, 5);
 //		addRandomBox(0, 0, 0, 10,50);
@@ -89,9 +87,9 @@ public class GameDisplay extends JPanel implements KeyListener {
 		//addBox(-700, 0, 0, 10,50);
 //		addSphere(500, 0, 0, 50, 100);
 //		addSpiral(-500,0,0);
-//		addCone(0, 0, 0);
+		addCone(0, 0, 0);
 //		addLineCone(0, 0, 0);
-//		addLineSpiral(-500, 0, 0);
+		addLineSpiral(-500, 0, 0);
 //		addLineSphere(500,0,0,50,100);
 //		addGrid(0, 0, 0, 50, 50, 10);
 		
@@ -105,6 +103,7 @@ public class GameDisplay extends JPanel implements KeyListener {
 		super.paintComponent(g);
 		//Camera camera = new Camera(look);
 		look.update();
+
 		look2.setxDirection(look.getxDirection());
 		look2.setyDirection(look.getyDirection());
 		look2.setzDirection(look.getzDirection());
@@ -112,6 +111,7 @@ public class GameDisplay extends JPanel implements KeyListener {
 		look2.setyRotDirection(look.getyRotDirection());
 		look2.setCameraLocked(look.isCameraLocked());
 		look2.update();
+
 		//look.paintArrow(g);
 		
 		pointDispList.clear();
@@ -124,7 +124,7 @@ public class GameDisplay extends JPanel implements KeyListener {
 //				
 //			}
 //		}	
-		//flyMovements();
+//		flyMovements();
 		//3D
 		for (int i = 0; i < pointList3D.size(); i++) {
 			//pointList3D.get(i).display(g);
@@ -133,14 +133,6 @@ public class GameDisplay extends JPanel implements KeyListener {
 			}
 		}	
 
-		
-//		int moveLeft = -500;
-//
-//		drawPlane(moveLeft, 0, 0, 100, camera, g,new Color(255,255,255));
-//		drawPlane(moveLeft, 0, 100, 100, camera, g,new Color(255,255,255));
-//		drawVPlane(moveLeft, 0, 0, 100, camera, g,new Color(240,240,255));
-//		drawVPlane(moveLeft+ 100, 0, 0, 100, camera, g,new Color(240,240,255));
-		
 		//second view
 		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(0, 0, GameRunner.WIDTH, GameRunner.HEIGHT);
@@ -506,24 +498,24 @@ public class GameDisplay extends JPanel implements KeyListener {
 			}
 			//System.out.println("Q - down");
 			break;
-		case KeyEvent.VK_UP:
-			COUNTERCLOCKWISEDOWNY = true;
-			if (CLOCKWISEDOWNY){
-				look.setyRotDirection(Looker.STOP);
-			}else{
-				look.setyRotDirection(Looker.CLOCKWISE);
-			}
-			//System.out.println("UP - pitch forward");
-			break;
-		case KeyEvent.VK_DOWN:
-			CLOCKWISEDOWNY = true;
-			if (COUNTERCLOCKWISEDOWNY){
-				look.setyRotDirection(Looker.STOP);
-			}else{
-				look.setyRotDirection(Looker.CCLOCKWISE);
-			}
-			//System.out.println("DOWN - pitch back");
-			break;
+//		case KeyEvent.VK_UP:
+//			COUNTERCLOCKWISEDOWNY = true;
+//			if (CLOCKWISEDOWNY){
+//				look.setyRotDirection(Looker.STOP);
+//			}else{
+//				look.setyRotDirection(Looker.CLOCKWISE);
+//			}
+//			//System.out.println("UP - pitch forward");
+//			break;
+//		case KeyEvent.VK_DOWN:
+//			CLOCKWISEDOWNY = true;
+//			if (COUNTERCLOCKWISEDOWNY){
+//				look.setyRotDirection(Looker.STOP);
+//			}else{
+//				look.setyRotDirection(Looker.CCLOCKWISE);
+//			}
+//			//System.out.println("DOWN - pitch back");
+//			break;
 		case KeyEvent.VK_LEFT:
 			COUNTERCLOCKWISEDOWNX = true;
 			if (CLOCKWISEDOWNX){
@@ -602,24 +594,24 @@ public class GameDisplay extends JPanel implements KeyListener {
 			}
 			//System.out.println("Q - down");
 			break;
-		case KeyEvent.VK_UP:
-			COUNTERCLOCKWISEDOWNY = false;
-			if (CLOCKWISEDOWNY){
-				look.setyRotDirection(Looker.CLOCKWISE);
-			}else{
-				look.setyRotDirection(Looker.STOP);
-			}
-			//System.out.println("UP - pitch forward");
-			break;
-		case KeyEvent.VK_DOWN:
-			CLOCKWISEDOWNY = false;
-			if (COUNTERCLOCKWISEDOWNY){
-				look.setyRotDirection(Looker.CCLOCKWISE);
-			}else{
-				look.setyRotDirection(Looker.STOP);
-			}
-			//System.out.println("DOWN - pitch back");
-			break;
+//		case KeyEvent.VK_UP:
+//			COUNTERCLOCKWISEDOWNY = false;
+//			if (CLOCKWISEDOWNY){
+//				look.setyRotDirection(Looker.CLOCKWISE);
+//			}else{
+//				look.setyRotDirection(Looker.STOP);
+//			}
+//			//System.out.println("UP - pitch forward");
+//			break;
+//		case KeyEvent.VK_DOWN:
+//			CLOCKWISEDOWNY = false;
+//			if (COUNTERCLOCKWISEDOWNY){
+//				look.setyRotDirection(Looker.CCLOCKWISE);
+//			}else{
+//				look.setyRotDirection(Looker.STOP);
+//			}
+//			//System.out.println("DOWN - pitch back");
+//			break;
 		case KeyEvent.VK_LEFT:
 			COUNTERCLOCKWISEDOWNX = false;
 			if (CLOCKWISEDOWNX){
